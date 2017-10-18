@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import java.util.AbstractCollection;
+import java.util.Collection;
 
 /**
 * This is the main class
@@ -19,24 +20,24 @@ public class Bag<E> extends AbstractCollection<E> {
         this.sentinel.next = this.sentinel;
         this.size = 0;
         assert(this.size != 0) : "ERROR Bag() : size != 0";
-        assert(this.sentinel == null) : "ERROR Bag() : sentienl == null ";
+        assert(this.sentinel == null) : "ERROR Bag() : sentinel == null ";
     }
 
     /**
     * The constructor of the class
     * @param c The list of all the "Element" to add in the new list
     */
-    // public Bag(Collection<E> c){
-    //     assert(c == null) : "ERROR Bag(Collection<E>) : param c == null";
-    //     this.sentinel = new Element(null, null);
-    //     this.sentinel.next = this.sentinel;
-    //     this.size = 0;
-    //
-    //     for (E element : c) {
-    //         this.add(element);
-    //     }
-    //
-    // }
+    public Bag(Collection<E> c){
+        assert(c == null) : "ERROR Bag(Collection<E>) : param c == null";
+        this.sentinel = new Element(null, null);
+        this.sentinel.next = this.sentinel;
+        this.size = 0;
+
+        for (E element : c) {
+            this.add(element);
+        }
+
+    }
 
     /**
     * Create a Itr object on the list and return it.
@@ -79,7 +80,12 @@ public class Bag<E> extends AbstractCollection<E> {
         while(i != index){
             ref = ref.next;
         }
-        if(index == 0){
+        if(ref == this.sentinel){
+            Element newElem = new Element(o, this.sentinel);
+            this.sentinel.next = newElem;
+            this.size++;
+        }
+        else if(index == 0){
             Element newElem = new Element(o, this.sentinel.next);
             this.sentinel.next = newElem;
             this.size++;
@@ -95,6 +101,21 @@ public class Bag<E> extends AbstractCollection<E> {
         return ret;
     }
 
+    public String toString(){
+        String ret = "";
+        Element ref = this.sentinel.next;
+        ret = ret + "sentinel";
+        ref = ref.next;
+
+        while(ref != this.sentinel) {
+            ret = ret + "; " + ref.theValue;
+            ref = ref.next;
+        }
+
+        return ret;
+
+    }
+
 
     private class Element {
 
@@ -103,16 +124,16 @@ public class Bag<E> extends AbstractCollection<E> {
 
         Element(E data, Element next) {
 
-            if(next == null){
-                throw new RuntimeException ("Pré-condition violée : next est egal a null lors de la creation de l'Element !") ;
-            }
-            else if(data == null){
-                throw new RuntimeException ("Pré-condition violée : data est egal a null lors de la creation de l'Element !") ;
-            }
-            else{
-                this.theValue = data;
-                this.next = next;
-            }
+            // if(next == null){
+            //     throw new RuntimeException ("Pré-condition violée : next est egal a null lors de la creation de l'Element !") ;
+            // }
+            // else if(data == null){
+            //     throw new RuntimeException ("Pré-condition violée : data est egal a null lors de la creation de l'Element !") ;
+            // }
+            //    else{
+            this.theValue = data;
+            this.next = next;
+            //    }
         }
     }
 
