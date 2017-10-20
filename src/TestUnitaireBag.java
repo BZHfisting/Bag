@@ -36,7 +36,7 @@ public class TestUnitaireBag {
         System.out.println("   2) Bag with elements\n");
         bag.add(15);
         bag.add(9);
-        bag.add(7);
+        bag.add(16);
         bag.add(2);
         System.out.println(bag.toString() + "\n");
 
