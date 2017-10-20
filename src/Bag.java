@@ -39,6 +39,7 @@ public class Bag<E> extends AbstractCollection<E> {
             this.add(element);
         }
 
+        assert(this.size != c.size()) : "ERROR Bag(Collection) : size invalid";
     }
 
     /**
@@ -57,10 +58,11 @@ public class Bag<E> extends AbstractCollection<E> {
     }
 
     /**
-    * The constructor of the class
-    * @param c The list of all the "Element" to add in the new list
+    * The method add a new Element in the bag and invalid all the iterators.
+    * @param o The data to add in a new Element in the Bag
     */
     public boolean add(E o) {
+        assert(o == null) : "ERROR add() : param o == null";
 
         boolean ret = false;
         int afterSize = this.size;
@@ -94,6 +96,10 @@ public class Bag<E> extends AbstractCollection<E> {
 
     }
 
+    /**
+    * This method create a picture of this bag in a String
+    * @return The actual bag status in a String
+    */
     public String toString(){
         String ret = "";
         Element ref = this.sentinel.next;
@@ -105,7 +111,6 @@ public class Bag<E> extends AbstractCollection<E> {
         }
 
         return ret;
-
     }
 
 
@@ -114,6 +119,11 @@ public class Bag<E> extends AbstractCollection<E> {
         public Element next ;
         public E theValue ;
 
+        /**
+        * This is the constructor of the Element class
+        * @param data The data to put in the Element
+        * @param next The Element placed at the next position of this Element
+        */
         Element(E data, Element next) {
 
             if(sentinel != null){
@@ -132,10 +142,6 @@ public class Bag<E> extends AbstractCollection<E> {
                 this.theValue = data;
                 this.next = next;
             }
-        }
-
-        public E getValue(){
-            return this.theValue;
         }
     }
 
