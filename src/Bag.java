@@ -1,6 +1,7 @@
 import java.util.Iterator;
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 
 /**
 * This is the main class
@@ -11,6 +12,7 @@ public class Bag<E> extends AbstractCollection<E> {
 
     Element sentinel;
     int size;
+    int modCount = 0;
 
     /**
     * This constructor of the Bag class create an empty list and set it attributes
@@ -87,6 +89,7 @@ public class Bag<E> extends AbstractCollection<E> {
 
         }
         assert(afterSize <= this.size) : "ERROR add() : PostCondition size est incorrect";
+        this.modCount++;
         return ret;
 
     }
@@ -97,7 +100,6 @@ public class Bag<E> extends AbstractCollection<E> {
         ret = ret + "sentinel";
 
         for(int i = 0; i < this.size; i++){
-            System.out.println(ref);
             ret = ret + "; " + ref.theValue;
             ref = ref.next;
         }
@@ -140,6 +142,7 @@ public class Bag<E> extends AbstractCollection<E> {
     public class Itr implements Iterator<E> {
         public Element current;
         public Element pastCurrent;
+        public int expectedModCount;
 
         /**
         * The constructor of the class
@@ -147,6 +150,7 @@ public class Bag<E> extends AbstractCollection<E> {
         public Itr() {
             this.current = Bag.this.sentinel;
             this.pastCurrent = Bag.this.sentinel;
+            this.expectedModCount = modCount;
         }
 
         /**
@@ -154,9 +158,16 @@ public class Bag<E> extends AbstractCollection<E> {
         * @return true if the iterator is not at the end of the list.
         */
         public boolean hasNext() {
-            boolean hasNext = true;
-            if (this.next().equals(Bag.this.sentinel)) {
-                hasNext = false;
+            boolean hasNext = false;
+            if(this.expectedModCount == modCount){
+                if(size != 0){
+                    if (!(this.next().equals(Bag.this.sentinel))) {
+                        hasNext = true;
+                    }
+                }
+            }
+            else{
+                throw new ConcurrentModificationException();
             }
             return hasNext;
         }
@@ -166,8 +177,13 @@ public class Bag<E> extends AbstractCollection<E> {
         * @return The current object
         */
         public E next() {
-            this.pastCurrent = this.current;
-            this.current = this.current.next;
+            if(this.expectedModCount == modCount){
+                this.pastCurrent = this.current;
+                this.current = this.current.next;
+            }
+            else{
+                throw new ConcurrentModificationException();
+            }
             return this.current.theValue;
         }
 
@@ -175,11 +191,16 @@ public class Bag<E> extends AbstractCollection<E> {
         * Removes the element designated by the iterator. If the operation is possible (see description of class Itr below), then the current element will be placed on the element to its left (current and pastCurrent then point to the same element).
         */
         public void remove() {
-            if (this.current.equals(this.pastCurrent)) {
-                this.next();
+            if(this.expectedModCount == modCount){
+                if (this.current.equals(this.pastCurrent)) {
+                    this.next();
+                }
+                this.pastCurrent.next = this.current.next;
+                this.current = this.pastCurrent;
+                size--;
+                modCount++;
+                this.expectedModCount = modCount;
             }
-            this.pastCurrent.next = this.current.next;
-            this.current = this.pastCurrent;
         }
     }
 }
