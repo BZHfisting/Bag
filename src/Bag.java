@@ -182,6 +182,4 @@ public class Bag<E> extends AbstractCollection<E> {
             this.current = this.pastCurrent;
         }
     }
-
-
 }

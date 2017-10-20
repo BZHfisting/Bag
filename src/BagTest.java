@@ -1,13 +1,20 @@
 
 import java.util.*;
 
+/**
+  * This class tests the balance of the placement of each value, from 1 to 10, 1000 times.
+  */
 public class BagTest {
 
+    /**
+      * Launches the test.
+      * @param args the arguments from the console
+      */
     public static void main(String[] args) {
         Integer[][] indexOccurences = new Integer[10][10];
         Arrays.fill(indexOccurences, 0);
         Bag bag1 = new Bag();
-        int nbExp = 0;
+        int nbExp = 1000;
         for (int exp = 0; exp < nbExp; exp++) {
             bag1.add(new Integer(1));
             bag1.add(new Integer(2));
@@ -30,6 +37,7 @@ public class BagTest {
 
             bag1.clear();
         }
+
         for (int i = 0; i < indexOccurences.length; i++) {
             System.out.println("Placements de " + i+1 + " : ");
             for (int j = 0; j < indexOccurences.length; j++) {
