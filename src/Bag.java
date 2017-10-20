@@ -56,58 +56,48 @@ public class Bag<E> extends AbstractCollection<E> {
 
     /**
     * The constructor of the class
+    * @param c The list of all the "Element" to add in the new list
     */
-    public boolean add(E o){
-        assert(o == null) : "ERROR add() : o == null";
+    public boolean add(E o) {
 
-        boolean ret = true;
+        boolean ret = false;
         int afterSize = this.size;
-        int index = -1;
 
-        if(this.size > Integer.MAX_VALUE){
-            ret = false;
-        }
+        if(sentinel.next == sentinel) {
 
-        index = (int) Math.random()*this.size;
-
-        assert(index < 0) : "ERROR add() : index < 0";
-        assert(index > this.size) : "ERROR add() : index > size";
-
-        Element ref = this.sentinel;
-        boolean trouve = false;
-        int i = 0;
-
-        while(i != index){
-            ref = ref.next;
-        }
-        if(ref == this.sentinel){
-            Element newElem = new Element(o, this.sentinel);
-            this.sentinel.next = newElem;
+            Element newElem = new Element(o, sentinel);
+            sentinel.next = newElem;
             this.size++;
-        }
-        else if(index == 0){
-            Element newElem = new Element(o, this.sentinel.next);
-            this.sentinel.next = newElem;
-            this.size++;
-        }
-        else{
-            Element newElem = new Element(o, ref.next);
-            ref.next = newElem;
-            this.size++;
-        }
 
+        } else {
+
+            int index = 0 + (int)(Math.random()*(size) + 1);
+            assert(index < 0) : "ERROR add() : index < 0";
+            assert(index > this.size) : "ERROR add() : index > size";
+            Itr it = new Itr();
+            for(int i = 0; i<index; i++) {
+
+                it.next();
+
+            }
+
+            Element newElem = new Element(o, it.current);
+            it.pastCurrent.next = newElem;
+            this.size++;
+
+        }
         assert(afterSize <= this.size) : "ERROR add() : PostCondition size est incorrect";
-
         return ret;
+
     }
 
     public String toString(){
         String ret = "";
         Element ref = this.sentinel.next;
         ret = ret + "sentinel";
-        ref = ref.next;
 
-        while(ref != this.sentinel) {
+        for(int i = 0; i < this.size; i++){
+            System.out.println(ref);
             ret = ret + "; " + ref.theValue;
             ref = ref.next;
         }
@@ -119,27 +109,37 @@ public class Bag<E> extends AbstractCollection<E> {
 
     private class Element {
 
-        Element next ;
-        E theValue ;
+        public Element next ;
+        public E theValue ;
 
         Element(E data, Element next) {
 
-            // if(next == null){
-            //     throw new RuntimeException ("Pré-condition violée : next est egal a null lors de la creation de l'Element !") ;
-            // }
-            // else if(data == null){
-            //     throw new RuntimeException ("Pré-condition violée : data est egal a null lors de la creation de l'Element !") ;
-            // }
-            //    else{
-            this.theValue = data;
-            this.next = next;
-            //    }
+            if(sentinel != null){
+                if(next == null){
+                    throw new RuntimeException ("Pré-condition violée : next est egal a null lors de la creation de l'Element !") ;
+                }
+                else if(data == null){
+                    throw new RuntimeException ("Pré-condition violée : data est egal a null lors de la creation de l'Element !") ;
+                }
+                else{
+                    this.theValue = data;
+                    this.next = next;
+                }
+            }
+            else{
+                this.theValue = data;
+                this.next = next;
+            }
+        }
+
+        public E getValue(){
+            return this.theValue;
         }
     }
 
     public class Itr implements Iterator<E> {
-        Element current;
-        Element pastCurrent;
+        public Element current;
+        public Element pastCurrent;
 
         /**
         * The constructor of the class
